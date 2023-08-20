@@ -1,0 +1,3 @@
+.navlnk {
+    @apply  pl-6 py-4 hover:scale-105 border
+}
