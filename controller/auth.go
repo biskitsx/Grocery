@@ -50,7 +50,7 @@ func (controller *authController) Login(c *fiber.Ctx) error {
 		return fiber.NewError(400, "All field is required")
 	}
 	user := &model.User{}
-	database.Db.Where("Username = ?", dto.Username).First(user)
+	database.Db.Where("Username = ?", dto.Username).Preload("Cart").First(user)
 	if user.Username == "" {
 		return fiber.NewError(405, "Username not found")
 	}
@@ -58,7 +58,14 @@ func (controller *authController) Login(c *fiber.Ctx) error {
 	if user.Password != dto.Password {
 		return fiber.NewError(405, "Wrong Password")
 	}
-	token := controller.jwtService.GenerateToken(user.Username)
-	x, _ := controller.jwtService.ValidateToken(token)
-	return c.JSON(token)
+	token := controller.jwtService.GenerateToken(user.ID)
+	cookieToken := &fiber.Cookie{
+		Name:     "access_token",
+		Value:    token,
+		Secure:   false,
+		HTTPOnly: true,
+	}
+
+	c.Cookie(cookieToken)
+	return c.JSON(user)
 }

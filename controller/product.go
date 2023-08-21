@@ -11,6 +11,7 @@ type ProductController interface {
 	CreateProduct(c *fiber.Ctx) error
 	GetProduct(c *fiber.Ctx) error
 	DeleteProductById(c *fiber.Ctx) error
+	AddOrRemoveToCart(c *fiber.Ctx) error
 }
 
 type productController struct {
@@ -63,4 +64,40 @@ func (controller *productController) DeleteProductById(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"msg": "Delete successfully",
 	})
+}
+
+func (controller *productController) AddOrRemoveToCart(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if id == "" {
+		return fiber.NewError(400, "product not found")
+	}
+
+	// Find the product
+	product := model.Product{}
+	if err := database.Db.Where("id = ?", id).First(&product).Error; err != nil {
+		return fiber.NewError(400, "product not found")
+	}
+
+	// Find the user
+	user := model.User{}
+	userId := c.Locals("userId") // Assuming userId is of type uint
+	if err := database.Db.Where("id = ?", userId).Preload("Cart").First(&user).Error; err != nil {
+		return fiber.NewError(400, "user not found")
+	}
+
+	// Check if the product is already in the cart
+	productFoundInCart := false
+	for _, cartProduct := range user.Cart {
+		if cartProduct == product {
+			productFoundInCart = true
+			break
+		}
+	}
+
+	if productFoundInCart {
+		database.Db.Preload("Cart").Model(&user).Association("Cart").Delete(&product)
+	} else {
+		database.Db.Model(&user).Association("Cart").Append(&product)
+	}
+	return c.JSON(user)
 }

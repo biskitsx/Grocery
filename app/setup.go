@@ -6,6 +6,7 @@ import (
 	"github.com/biskitsx/Grocery/database"
 	"github.com/biskitsx/Grocery/router"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/joho/godotenv"
 )
@@ -19,6 +20,11 @@ func SetupAndRunApp() error {
 	if err := database.StartMySQL(); err != nil {
 		return err
 	}
+
+	app.Use(cors.New(cors.Config{
+		AllowCredentials: true,
+		AllowOrigins:     "http://localhost:5173",
+	}))
 
 	app.Use(logger.New(logger.Config{
 		Format: "[${ip}]:${port} ${status} - ${method} ${path} ${latency}\n",
