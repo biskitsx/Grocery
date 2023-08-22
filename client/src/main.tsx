@@ -8,12 +8,10 @@ import store from './store/store.ts'
 import axios from 'axios'
 axios.defaults.withCredentials = true
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
     <BrowserRouter>
-    <Provider store={store}>
+        <Provider store={store}>
 
-    <App />
-    </Provider>
+            <App />
+        </Provider>
     </BrowserRouter>
-  </React.StrictMode>,
 )

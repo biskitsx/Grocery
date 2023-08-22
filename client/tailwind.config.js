@@ -10,7 +10,10 @@ export default {
     },
     daisyui: {
         themes: [
-            "cupcake"
+            // "retro",
+            "dracula",
+            // "synthwave",
+            "cupcake",
         ]
     },
     plugins: [daisyui],

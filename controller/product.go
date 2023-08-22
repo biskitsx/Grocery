@@ -99,5 +99,8 @@ func (controller *productController) AddOrRemoveToCart(c *fiber.Ctx) error {
 	} else {
 		database.Db.Model(&user).Association("Cart").Append(&product)
 	}
-	return c.JSON(user)
+	return c.JSON(fiber.Map{
+		"remove": productFoundInCart,
+		"user":   user,
+	})
 }

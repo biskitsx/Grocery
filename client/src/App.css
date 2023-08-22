@@ -1,9 +1,9 @@
 .navlnk {
-    @apply  pl-6 py-4 hover:scale-105  font-medium hover:text-primary transition-transform
+    @apply  pl-6 py-4 hover:scale-105  font-medium hover:text-info transition-transform
 }
 
 .navlnk.active {
-    @apply text-primary font-bold 
+    @apply text-info  scale-105
 }
 
 body {

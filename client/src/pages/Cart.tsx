@@ -1,29 +1,20 @@
 import React, { useEffect } from 'react'
 import Layout from '../components/Layout'
 import axios from 'axios'
+import CartProduct from '../components/CartProduct'
+import { useDispatch, useSelector } from 'react-redux'
+import { CartDTO, load } from '../store/cart'
 
 function Cart() {
-    const getCart = async () => {
-        const res = await axios.get("http://localhost:3001/api/user/cart")
-        console.log(res.data)
-    }
-    useEffect(() => {
-        getCart()
-    }, [])
+    const { cart } = useSelector((state) => state.cart) as CartDTO[]
+
     return (
         <Layout>
-            <div className='flex flex-col'>
-                <div className="alert bg-base-100 h-32 flex shadow-md">
-                    <div className='h-full shadow-md'>
-                        <img src="/hbg.webp" alt="hbg" className='h-full' />
-                    </div>
-                    <span>Hamburger</span>
-                    <div className=''>
-                        <button className="btn btn-sm btn-primary">Accept</button>
-                    </div>
-                </div>
+            <div className='flex flex-col gap-10'>
+                {cart.map((product) =>
+                    <CartProduct props={product} key={product.ID} />
+                )}
             </div>
-
         </Layout>
     )
 }
